@@ -377,49 +377,14 @@ async function submitForm(){
   const fM={1:'До 80 м²',2:'80–150 м²',3:'150–250 м²',4:'Більше 250 м²'};
   const wM={1:'До 350 м²',2:'350–500 м²',3:'500–1000 м²',4:'Більше 1000 м²'};
 
-  try{
-    await fetch('/.netlify/functions/send-lead',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        name:name,
-        phone:phone,
-        object:oM[ans.q1]||'—',
-        floorArea:fM[ans.q2]||'—',
-        wallArea:wM[ans.q3]||'—',
-        city:ans.city||'—'
-      })
-    });
-  }catch(e){console.warn('Lead send error',e);}
+  const msg=`🏗 *Новий лід — PRO100 Штукатур*\n\n👤 Ім'я: ${name}\n📞 Телефон: ${phone}\n🏠 Об'єкт: ${oM[ans.q1]||'—'}\n📐 Площа по підлозі: ${fM[ans.q2]||'—'}\n📐 Площа по стінах: ${wM[ans.q3]||'—'}\n📍 Місто: ${ans.city||'—'}`;
 
-  // Отдельная отправка в Google Таблицу через ApiX-Drive
   try{
-    await fetch('https://s6.apix-drive.com/web-hooks/61497/zrsuerr6',{
+    await fetch('https://api.telegram.org/bot8603192710:AAF2PpmE8Ys0rx7IDRCw2btSVAwV0UuG7Oc/sendMessage',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        name:name,
-        phone:phone,
-        object:oM[ans.q1]||'—',
-        floorArea:fM[ans.q2]||'—',
-        wallArea:wM[ans.q3]||'—',
-        city:ans.city||'—'
-      })
+      body:JSON.stringify({chat_id:'-1003790687924',text:msg,parse_mode:'Markdown'})
     });
-  }catch(e){console.warn('ApiX-Drive send error',e);}
-
-  // Отправка в Google Таблицу через Apps Script
-  try{
-    await fetch('https://script.google.com/macros/s/AKfycbx8BmURu43xIQuv8ZX4zuIVDekLGG13_eBLTOtTL0BmvwisUJ6bgfXdMZq-k_ySu99MJA/exec',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        name:name,
-        phone:phone,
-        object:oM[ans.q1]||'—',
-        floorArea:fM[ans.q2]||'—',
-        wallArea:wM[ans.q3]||'—',
-        city:ans.city||'—'
-      })
-    });
-  }catch(e){console.warn('Google Sheets send error',e);}
+  }catch(e){console.warn('TG',e);}
 
   goToSlide(6);
 }
